@@ -26,7 +26,7 @@ test.describe("Deleting tasks", () => {
         await mainPage.deleteTask(task)
 
         // two are left
-        await expect(mainPage.getTask(text1)).not.toBeVisible()
+        await expect(mainPage.task(text1)).not.toBeVisible()
         await expect(mainPage.allTasks().all()).resolves.toHaveLength(2)
         await expect(mainPage.taskCounter).toContainText("2 items left")
     })
@@ -46,7 +46,7 @@ test.describe("Deleting tasks", () => {
         await mainPage.deleteTask(task)
 
         // two are left
-        await expect(mainPage.getTask(text2)).not.toBeVisible()
+        await expect(mainPage.task(text2)).not.toBeVisible()
         await expect(mainPage.allTasks().all()).resolves.toHaveLength(2)
         await expect(mainPage.taskCounter).toContainText("2 items left")
     })
@@ -64,7 +64,7 @@ test.describe("Deleting tasks", () => {
         await mainPage.deleteTask(task)
 
         // two are left
-        await expect(mainPage.getTask(text3)).not.toBeVisible()
+        await expect(mainPage.task(text3)).not.toBeVisible()
         await expect(mainPage.allTasks().all()).resolves.toHaveLength(0)
         await expect(mainPage.taskCounter).toContainText("2 items left")
     })
@@ -91,7 +91,7 @@ test.describe("Deleting tasks", () => {
             await mainPage.clearCompletedTasks()
 
             // Verify the completed task is deleted
-            await expect(mainPage.getTask(text2)).toBeHidden()
+            await expect(mainPage.task(text2)).toBeHidden()
             await expect(mainPage.completedTasks().all()).resolves.toHaveLength(0)
 
             // Additional verification for All filter

@@ -30,9 +30,7 @@ export class MainPage {
         }
     }
 
-    // @mii getter
-    // @mii rename to task to be consistent with other getters
-    getTask(selector: string | number): Locator {
+    task(selector: string | number): Locator {
         if (typeof selector === "string") {
             return this.tasksContainer.locator("li").filter({ hasText: selector })
         } else {
@@ -69,7 +67,7 @@ export class MainPage {
         await this.newTaskInput.press("Enter")
 
         // Return the locator for the newly added task
-        return this.getTask(taskText)
+        return this.task(taskText)
     }
 
     async editTask(task: Locator, newText: string) {

@@ -97,7 +97,7 @@ test.describe("UI and Visual Checks", () => {
         // Arrange: add 2 tasks, complete one of them
         await mainPage.addNewTask(text1)
         await mainPage.addNewTask(text2)
-        await mainPage.check(mainPage.getTask(0))
+        await mainPage.check(mainPage.task(0))
 
         await expect(mainPage.allTasks().nth(0).locator("label")).toHaveCSS(
             "text-decoration",
@@ -139,7 +139,7 @@ test.describe("UI and Visual Checks", () => {
         await mainPage.addNewTask(text2)
 
         // start editing a task
-        const task1 = mainPage.getTask(1)
+        const task1 = mainPage.task(1)
         await task1.dblclick()
 
         // check the other controls
