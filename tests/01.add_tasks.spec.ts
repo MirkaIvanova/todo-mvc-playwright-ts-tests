@@ -2,7 +2,6 @@ import { test, expect } from "@playwright/test"
 import { MainPage } from "../pages/mainPage"
 
 test.describe("Adding tasks", () => {
-    // mii rename
     const text1 = "reply to emails like a responsible adult"
     const text2 = "call mom before she calls again"
     const text3 = "start sorting the laundry and hope for the best"
