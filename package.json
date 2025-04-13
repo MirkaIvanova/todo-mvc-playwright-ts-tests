@@ -8,8 +8,7 @@
         "test:allbrowsers": "npx playwright test",
         "test:ui": "playwright test --ui",
         "test:headed": "npx playwright test --headed",
-        "report": "playwright show-report",
-        "project:commit": "powershell -Command \"git add -A; git commit --all -m \\\"$((Get-Item (Get-Location)).Parent.Name)/$((Get-Item (Get-Location)).Name):$(Get-Date -Format 'yyyy-MM-dd_HH:mm:ss')\\\"; git push \""
+        "report": "playwright show-report"
     },
     "keywords": [
         "playwright",
