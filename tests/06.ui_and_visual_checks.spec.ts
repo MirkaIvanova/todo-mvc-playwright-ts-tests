@@ -1,17 +1,14 @@
-import { test, expect } from "@playwright/test"
-import { MainPage } from "../pages/mainPage"
+import { test, expect } from "../fixtures/fixtures"
 
 test.describe("UI and Visual Checks", () => {
     const text1 = "reply to emails like a responsible adult"
     const text2 = "call mom before she calls again"
 
-    test.beforeEach(async ({ page }) => {
-        await page.goto("https://demo.playwright.dev/todomvc")
+    test.beforeEach(async ({ todoPage }) => {
+        await todoPage.goto()
     })
 
-    test("landing page - default state", async ({ page }) => {
-        const mainPage = new MainPage(page)
-
+    test("landing page - default state", async ({ page, todoPage }) => {
         // title of the page
         await expect(page).toHaveTitle("React • TodoMVC")
 
@@ -24,126 +21,114 @@ test.describe("UI and Visual Checks", () => {
         await expect(appName).toHaveText("todos")
 
         //input field
-        await expect(mainPage.newTaskInput).toBeVisible()
-        await expect(mainPage.newTaskInput).toBeEmpty()
-        await expect(mainPage.newTaskInput).toHaveAttribute("placeholder", "What needs to be done?")
+        await expect(todoPage.newTaskInput).toBeVisible()
+        await expect(todoPage.newTaskInput).toBeEmpty()
+        await expect(todoPage.newTaskInput).toHaveAttribute("placeholder", "What needs to be done?")
 
         // no tasks
-        await expect(mainPage.allTasks().all()).resolves.toHaveLength(0)
+        await expect(todoPage.allTasks().all()).resolves.toHaveLength(0)
 
         // footer is not visible when the task list is empty
-        await expect(mainPage.taskCounter).toBeHidden()
-        await expect(mainPage.clearCompletedButton).toBeHidden()
-        await expect(mainPage.toggleAllCheckbox).toBeHidden()
-        await expect(mainPage.filters.all).toBeHidden()
-        await expect(mainPage.filters.active).toBeHidden()
-        await expect(mainPage.filters.completed).toBeHidden()
-        await expect(mainPage.tasksContainer).toBeHidden()
-        await expect(mainPage.taskCounter).toBeHidden()
+        await expect(todoPage.taskCounter).toBeHidden()
+        await expect(todoPage.clearCompletedButton).toBeHidden()
+        await expect(todoPage.toggleAllCheckbox).toBeHidden()
+        await expect(todoPage.filters.all).toBeHidden()
+        await expect(todoPage.filters.active).toBeHidden()
+        await expect(todoPage.filters.completed).toBeHidden()
+        await expect(todoPage.tasksContainer).toBeHidden()
+        await expect(todoPage.taskCounter).toBeHidden()
     })
 
-    test("default state of footer when there are no tasks in this filter", async ({ page }) => {
-        const mainPage = new MainPage(page)
-
+    test("default state of footer when there are no tasks in this filter", async ({ todoPage }) => {
         // Create 1 task and complete it
-        await mainPage.addNewTask(text1)
-        await mainPage.check(mainPage.allTasks().first())
+        await todoPage.addNewTask(text1)
+        await todoPage.check(todoPage.allTasks().first())
 
         // No tasks is the Active filter, check footer
-        await mainPage.filterActiveTasks()
-        await expect(mainPage.allTasks().all()).resolves.toHaveLength(0)
-        await expect(mainPage.taskCounter).toHaveText("0 items left")
-        await expect(mainPage.clearCompletedButton).toBeVisible()
-        await expect(mainPage.toggleAllCheckbox).toBeVisible()
-        await expect(mainPage.filters.all).toBeVisible()
-        await expect(mainPage.filters.completed).toBeVisible()
+        await todoPage.filterActiveTasks()
+        await expect(todoPage.allTasks().all()).resolves.toHaveLength(0)
+        await expect(todoPage.taskCounter).toHaveText("0 items left")
+        await expect(todoPage.clearCompletedButton).toBeVisible()
+        await expect(todoPage.toggleAllCheckbox).toBeVisible()
+        await expect(todoPage.filters.all).toBeVisible()
+        await expect(todoPage.filters.completed).toBeVisible()
     })
 
-    test("'Clear completed' is not visible when no tasks are completed", async ({ page }) => {
-        const mainPage = new MainPage(page)
-
+    test("'Clear completed' is not visible when no tasks are completed", async ({ todoPage }) => {
         // Create 1 task
-        await mainPage.addNewTask(text1)
-        await expect(mainPage.clearCompletedButton).toBeHidden()
+        await todoPage.addNewTask(text1)
+        await expect(todoPage.clearCompletedButton).toBeHidden()
 
         // Complete the task
-        await mainPage.check(mainPage.allTasks().first())
-        await expect(mainPage.clearCompletedButton).toBeVisible()
+        await todoPage.check(todoPage.allTasks().first())
+        await expect(todoPage.clearCompletedButton).toBeVisible()
     })
 
-    test("currently selected filter is highlighted", async ({ page }) => {
-        const mainPage = new MainPage(page)
+    test("currently selected filter is highlighted", async ({ todoPage }) => {
+        todoPage.addNewTask(text1)
 
-        mainPage.addNewTask(text1)
+        await expect(todoPage.filters.all).toHaveClass("selected")
+        await expect(todoPage.filters.active).not.toHaveClass("selected")
+        await expect(todoPage.filters.completed).not.toHaveClass("selected")
 
-        await expect(mainPage.filters.all).toHaveClass("selected")
-        await expect(mainPage.filters.active).not.toHaveClass("selected")
-        await expect(mainPage.filters.completed).not.toHaveClass("selected")
+        await todoPage.filterActiveTasks()
+        await expect(todoPage.filters.all).not.toHaveClass("selected")
+        await expect(todoPage.filters.active).toHaveClass("selected")
+        await expect(todoPage.filters.completed).not.toHaveClass("selected")
 
-        await mainPage.filterActiveTasks()
-        await expect(mainPage.filters.all).not.toHaveClass("selected")
-        await expect(mainPage.filters.active).toHaveClass("selected")
-        await expect(mainPage.filters.completed).not.toHaveClass("selected")
-
-        await mainPage.filterCompletedTasks()
-        await expect(mainPage.filters.all).not.toHaveClass("selected")
-        await expect(mainPage.filters.active).not.toHaveClass("selected")
-        await expect(mainPage.filters.completed).toHaveClass("selected")
+        await todoPage.filterCompletedTasks()
+        await expect(todoPage.filters.all).not.toHaveClass("selected")
+        await expect(todoPage.filters.active).not.toHaveClass("selected")
+        await expect(todoPage.filters.completed).toHaveClass("selected")
     })
 
-    test("completed tasks styling - strikethrough and dimmed text", async ({ page }) => {
-        const mainPage = new MainPage(page)
-
+    test("completed tasks styling - strikethrough and dimmed text", async ({ todoPage }) => {
         // Arrange: add 2 tasks, complete one of them
-        await mainPage.addNewTask(text1)
-        await mainPage.addNewTask(text2)
-        await mainPage.check(mainPage.task(0))
+        await todoPage.addNewTask(text1)
+        await todoPage.addNewTask(text2)
+        await todoPage.check(todoPage.task(0))
 
-        await expect(mainPage.allTasks().nth(0).locator("label")).toHaveCSS(
+        await expect(todoPage.allTasks().nth(0).locator("label")).toHaveCSS(
             "text-decoration",
             "line-through solid rgb(217, 217, 217)"
         )
-        await expect(mainPage.allTasks().nth(0)).toHaveCSS("color", "rgb(77, 77, 77)")
-        await expect(mainPage.allTasks().nth(1)).not.toHaveCSS("text-decoration", "line-through")
-        await expect(mainPage.allTasks().nth(1)).not.toHaveCSS("color", "rgb(186, 189, 182)")
+        await expect(todoPage.allTasks().nth(0)).toHaveCSS("color", "rgb(77, 77, 77)")
+        await expect(todoPage.allTasks().nth(1)).not.toHaveCSS("text-decoration", "line-through")
+        await expect(todoPage.allTasks().nth(1)).not.toHaveCSS("color", "rgb(186, 189, 182)")
     })
 
-    test("delete button visible only on hover", async ({ page }) => {
-        const mainPage = new MainPage(page)
-
+    test("delete button visible only on hover", async ({ page, todoPage }) => {
         // Arrange: add 2 tasks
-        await mainPage.addNewTask(text1)
-        await mainPage.addNewTask(text2)
+        await todoPage.addNewTask(text1)
+        await todoPage.addNewTask(text2)
 
-        const task1 = mainPage.allTasks().nth(0)
-        const task2 = mainPage.allTasks().nth(1)
+        const task1 = todoPage.allTasks().nth(0)
+        const task2 = todoPage.allTasks().nth(1)
 
         // delete button is not visible when task is not hovered
-        await expect(mainPage.deleteButton(task1)).toBeHidden()
+        await expect(todoPage.deleteButton(task1)).toBeHidden()
 
         // delete button appears when task is hovered
         await task1.hover()
-        await expect(mainPage.deleteButton(task1)).toBeVisible()
-        await expect(mainPage.deleteButton(task2)).toBeHidden()
+        await expect(todoPage.deleteButton(task1)).toBeVisible()
+        await expect(todoPage.deleteButton(task2)).toBeHidden()
 
         // delete button disappears when mouse moves away
         await page.locator("body").click()
         await task2.hover()
-        await expect(mainPage.deleteButton(task1)).toBeHidden()
+        await expect(todoPage.deleteButton(task1)).toBeHidden()
     })
 
-    test("hide other controls when editing task", async ({ page }) => {
-        const mainPage = new MainPage(page)
-
-        await mainPage.addNewTask(text1)
-        await mainPage.addNewTask(text2)
+    test("hide other controls when editing task", async ({ todoPage }) => {
+        await todoPage.addNewTask(text1)
+        await todoPage.addNewTask(text2)
 
         // start editing a task
-        const task1 = mainPage.task(1)
+        const task1 = todoPage.task(1)
         await task1.dblclick()
 
         // check the other controls
         await expect(task1.getByRole("checkbox")).toBeHidden()
-        await expect(mainPage.deleteButton(task1)).toBeHidden()
+        await expect(todoPage.deleteButton(task1)).toBeHidden()
     })
 })

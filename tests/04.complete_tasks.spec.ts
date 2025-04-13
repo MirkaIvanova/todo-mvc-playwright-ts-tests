@@ -1,113 +1,102 @@
-import { test, expect } from "@playwright/test"
-import { MainPage } from "../pages/mainPage"
+import { test, expect } from "../fixtures/fixtures"
 
 test.describe("Completing tasks", () => {
     const text1 = "reply to emails like a responsible adult"
     const text2 = "call mom before she calls again"
     const text3 = "start sorting the laundry and hope for the best"
 
-    test.beforeEach(async ({ page }) => {
-        await page.goto("https://demo.playwright.dev/todomvc")
+    test.beforeEach(async ({ todoPage }) => {
+        await todoPage.goto()
 
-        const mainPage = new MainPage(page)
-        await mainPage.addNewTask(text1)
-        await mainPage.addNewTask(text2)
-        await mainPage.addNewTask(text3)
+        await todoPage.addNewTask(text1)
+        await todoPage.addNewTask(text2)
+        await todoPage.addNewTask(text3)
     })
 
-    test("mark a task as completed", async ({ page }) => {
-        const mainPage = new MainPage(page)
-        const allTasks = mainPage.allTasks()
+    test("mark a task as completed", async ({ todoPage }) => {
+        const allTasks = todoPage.allTasks()
 
         // Initially all tasks are active
-        await expect(mainPage.allTasks().all()).resolves.toHaveLength(3)
-        await expect(mainPage.activeTasks().all()).resolves.toHaveLength(3)
-        await expect(mainPage.completedTasks().all()).resolves.toHaveLength(0)
+        await expect(todoPage.allTasks().all()).resolves.toHaveLength(3)
+        await expect(todoPage.activeTasks().all()).resolves.toHaveLength(3)
+        await expect(todoPage.completedTasks().all()).resolves.toHaveLength(0)
 
         // Mark the first task as completed
-        await mainPage.check(allTasks.first())
+        await todoPage.check(allTasks.first())
 
-        await expect(mainPage.isCompleted(mainPage.allTasks().nth(0))).toBeTruthy()
-        await expect(mainPage.activeTasks().all()).resolves.toHaveLength(2)
-        await expect(mainPage.completedTasks().all()).resolves.toHaveLength(1)
-        await expect(mainPage.isChecked(mainPage.allTasks().nth(0))).toBeTruthy()
-        await expect(mainPage.isCompleted(mainPage.allTasks().nth(0))).toBeTruthy()
-        await expect(mainPage.taskCounter).toContainText("2 items left")
+        await expect(todoPage.isCompleted(todoPage.allTasks().nth(0))).toBeTruthy()
+        await expect(todoPage.activeTasks().all()).resolves.toHaveLength(2)
+        await expect(todoPage.completedTasks().all()).resolves.toHaveLength(1)
+        await expect(todoPage.isChecked(todoPage.allTasks().nth(0))).toBeTruthy()
+        await expect(todoPage.isCompleted(todoPage.allTasks().nth(0))).toBeTruthy()
+        await expect(todoPage.taskCounter).toContainText("2 items left")
     })
 
-    test("mark a task as uncompleted", async ({ page }) => {
-        const mainPage = new MainPage(page)
+    test("mark a task as uncompleted", async ({ todoPage }) => {
+        // Mark the first task as completed
+        await todoPage.check(todoPage.allTasks().nth(0))
+        await expect(todoPage.isCompleted(todoPage.allTasks().nth(0))).resolves.toBeTruthy()
+        await expect(todoPage.taskCounter).toContainText("2 items left")
 
         // Mark the first task as completed
-        await mainPage.check(mainPage.allTasks().nth(0))
-        await expect(mainPage.isCompleted(mainPage.allTasks().nth(0))).resolves.toBeTruthy()
-        await expect(mainPage.taskCounter).toContainText("2 items left")
+        await todoPage.uncheck(await todoPage.allTasks().nth(0))
 
-        // Mark the first task as completed
-        await mainPage.uncheck(await mainPage.allTasks().nth(0))
-
-        await expect(mainPage.isChecked(mainPage.allTasks().nth(0))).resolves.toBeFalsy()
-        await expect(mainPage.taskCounter).toContainText("3 items left")
+        await expect(todoPage.isChecked(todoPage.allTasks().nth(0))).resolves.toBeFalsy()
+        await expect(todoPage.taskCounter).toContainText("3 items left")
     })
 
-    test("mark all items as completed, start from mixed state", async ({ page }) => {
-        const mainPage = new MainPage(page)
+    test("mark all items as completed, start from mixed state", async ({ todoPage }) => {
+        await todoPage.check(todoPage.allTasks().nth(1))
 
-        await mainPage.check(mainPage.allTasks().nth(1))
+        await expect(todoPage.activeTasks().all()).resolves.toHaveLength(2)
+        await expect(todoPage.completedTasks().all()).resolves.toHaveLength(1)
+        await expect(todoPage.taskCounter).toContainText("2 items left")
 
-        await expect(mainPage.activeTasks().all()).resolves.toHaveLength(2)
-        await expect(mainPage.completedTasks().all()).resolves.toHaveLength(1)
-        await expect(mainPage.taskCounter).toContainText("2 items left")
+        await todoPage.toggleAllTasks()
 
-        await mainPage.toggleAllTasks()
-
-        await expect(mainPage.activeTasks().all()).resolves.toHaveLength(0)
-        await expect(mainPage.completedTasks().all()).resolves.toHaveLength(3)
-        await expect(mainPage.isCompleted(mainPage.allTasks().nth(0))).resolves.toBeTruthy()
-        await expect(mainPage.isCompleted(mainPage.allTasks().nth(1))).resolves.toBeTruthy()
-        await expect(mainPage.isCompleted(mainPage.allTasks().nth(2))).resolves.toBeTruthy()
-        await expect(mainPage.taskCounter).toContainText("0 items left")
+        await expect(todoPage.activeTasks().all()).resolves.toHaveLength(0)
+        await expect(todoPage.completedTasks().all()).resolves.toHaveLength(3)
+        await expect(todoPage.isCompleted(todoPage.allTasks().nth(0))).resolves.toBeTruthy()
+        await expect(todoPage.isCompleted(todoPage.allTasks().nth(1))).resolves.toBeTruthy()
+        await expect(todoPage.isCompleted(todoPage.allTasks().nth(2))).resolves.toBeTruthy()
+        await expect(todoPage.taskCounter).toContainText("0 items left")
     })
 
-    test("mark all items as completed from All/Active/Completed views", async ({ page }) => {
-        const mainPage = new MainPage(page)
-
+    test("mark all items as completed from All/Active/Completed views", async ({ todoPage }) => {
         // Mark all tasks as completed from "All" view
-        await mainPage.toggleAllTasks()
-        await expect(mainPage.activeTasks().all()).resolves.toHaveLength(0)
-        await expect(mainPage.completedTasks().all()).resolves.toHaveLength(3)
-        await expect(mainPage.taskCounter).toContainText("0 items left")
+        await todoPage.toggleAllTasks()
+        await expect(todoPage.activeTasks().all()).resolves.toHaveLength(0)
+        await expect(todoPage.completedTasks().all()).resolves.toHaveLength(3)
+        await expect(todoPage.taskCounter).toContainText("0 items left")
 
         // Mark all tasks as uncompleted from "Active" view
-        await mainPage.filterActiveTasks()
-        await mainPage.toggleAllTasks()
-        await expect(mainPage.activeTasks().all()).resolves.toHaveLength(3)
-        await expect(mainPage.completedTasks().all()).resolves.toHaveLength(0)
-        await expect(mainPage.taskCounter).toContainText("3 items left")
+        await todoPage.filterActiveTasks()
+        await todoPage.toggleAllTasks()
+        await expect(todoPage.activeTasks().all()).resolves.toHaveLength(3)
+        await expect(todoPage.completedTasks().all()).resolves.toHaveLength(0)
+        await expect(todoPage.taskCounter).toContainText("3 items left")
 
         // Mark all tasks as completed from "Completed" view
-        await mainPage.filterCompletedTasks()
-        await mainPage.toggleAllTasks()
-        await expect(mainPage.activeTasks().all()).resolves.toHaveLength(0)
-        await expect(mainPage.completedTasks().all()).resolves.toHaveLength(3)
-        await expect(mainPage.taskCounter).toContainText("0 items left")
+        await todoPage.filterCompletedTasks()
+        await todoPage.toggleAllTasks()
+        await expect(todoPage.activeTasks().all()).resolves.toHaveLength(0)
+        await expect(todoPage.completedTasks().all()).resolves.toHaveLength(3)
+        await expect(todoPage.taskCounter).toContainText("0 items left")
     })
 
     test("'mark all items as completed' checkbox updates state when tasks are completed / uncompleted", async ({
-        page,
+        todoPage,
     }) => {
-        const mainPage = new MainPage(page)
-
         // The checkbox should be checked (darker color) when all tasks are completed
-        await mainPage.toggleAllTasks()
-        await expect(mainPage.toggleAllCheckbox).toBeChecked()
+        await todoPage.toggleAllTasks()
+        await expect(todoPage.toggleAllCheckbox).toBeChecked()
 
         // The checkbox should be unchecked (light color) when not all tasks are completed
-        await mainPage.uncheck(mainPage.allTasks().nth(0))
-        await expect(mainPage.toggleAllCheckbox).not.toBeChecked()
+        await todoPage.uncheck(todoPage.allTasks().nth(0))
+        await expect(todoPage.toggleAllCheckbox).not.toBeChecked()
 
         // Assert the toggle all is checked again when we complete the last task
-        await mainPage.check(mainPage.allTasks().nth(0))
-        await expect(mainPage.toggleAllCheckbox).toBeChecked()
+        await todoPage.check(todoPage.allTasks().nth(0))
+        await expect(todoPage.toggleAllCheckbox).toBeChecked()
     })
 })

@@ -1,6 +1,17 @@
+import { BasePage } from "./basePage"
 import { type Locator, type Page } from "@playwright/test"
 
-export class MainPage {
+export class TodoPage extends BasePage {
+    readonly path = "/todomvc"
+
+    async goto() {
+        await super.goto(this.path)
+    }
+
+    // Other page-specific methods...
+}
+
+export class MainPage extends BasePage {
     readonly page: Page
     readonly newTaskInput: Locator
     readonly taskCounter: Locator
@@ -15,6 +26,7 @@ export class MainPage {
     readonly tasksContainer: Locator
 
     constructor(page: Page) {
+        super(page)
         this.page = page
         this.newTaskInput = page.getByPlaceholder("What needs to be done?")
         this.taskCounter = page.locator(".todo-count")
@@ -56,8 +68,8 @@ export class MainPage {
         return task.locator("button.destroy")
     }
 
-    async goto() {
-        await this.page.goto("https://demo.playwright.dev/todomvc")
+    async goto(url = "/todomvc/") {
+        await super.goto(url)
     }
 
     async addNewTask(taskText: string): Promise<Locator> {

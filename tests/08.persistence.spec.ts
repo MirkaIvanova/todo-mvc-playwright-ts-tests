@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test"
+import { test, expect } from "../fixtures/fixtures"
 import { MainPage } from "../pages/mainPage"
 
 test.describe("Persistence", () => {
@@ -6,23 +6,22 @@ test.describe("Persistence", () => {
     const text2 = "call mom before she calls again"
     const text3 = "start sorting the laundry and hope for the best"
 
-    test.beforeEach(async ({ page }) => {
-        await page.goto("https://demo.playwright.dev/todomvc")
+    test.beforeEach(async ({ todoPage }) => {
+        await todoPage.goto()
     })
 
-    test("tasks text, order and completed state persists after page refresh", async ({ page }) => {
-        const mainPage = new MainPage(page)
-        await mainPage.addNewTask(text1)
-        await mainPage.addNewTask(text2)
-        await mainPage.addNewTask(text3)
-        await mainPage.check(mainPage.allTasks().nth(1))
+    test("tasks text, order and completed state persists after page refresh", async ({ page, todoPage }) => {
+        await todoPage.addNewTask(text1)
+        await todoPage.addNewTask(text2)
+        await todoPage.addNewTask(text3)
+        await todoPage.check(todoPage.allTasks().nth(1))
 
-        const allTasks = mainPage.allTasks()
+        const allTasks = todoPage.allTasks()
         await expect(allTasks.nth(0)).toContainText(text1)
         await expect(allTasks.nth(1)).toContainText(text2)
         await expect(allTasks.nth(2)).toContainText(text3)
-        await expect(mainPage.activeTasks().all()).resolves.toHaveLength(2)
-        await expect(mainPage.completedTasks().all()).resolves.toHaveLength(1)
+        await expect(todoPage.activeTasks().all()).resolves.toHaveLength(2)
+        await expect(todoPage.completedTasks().all()).resolves.toHaveLength(1)
 
         await page.reload()
 
@@ -37,13 +36,12 @@ test.describe("Persistence", () => {
         await expect(reloadedPage.completedTasks().all()).resolves.toHaveLength(1)
     })
 
-    test("applied filter persists after page refresh", async ({ page }) => {
-        const mainPage = new MainPage(page)
-        await mainPage.addNewTask(text1)
-        await mainPage.addNewTask(text2)
-        await mainPage.check(mainPage.allTasks().nth(1))
-        await mainPage.filterCompletedTasks()
-        await expect(mainPage.allTasks().all()).resolves.toHaveLength(1)
+    test("applied filter persists after page refresh", async ({ page, todoPage }) => {
+        await todoPage.addNewTask(text1)
+        await todoPage.addNewTask(text2)
+        await todoPage.check(todoPage.allTasks().nth(1))
+        await todoPage.filterCompletedTasks()
+        await expect(todoPage.allTasks().all()).resolves.toHaveLength(1)
 
         await page.reload()
 
@@ -56,12 +54,11 @@ test.describe("Persistence", () => {
         await expect(reloadedPage.filters.completed).toHaveClass("selected")
     })
 
-    test("clear localStorage and verify the app resets to empty state", async ({ page }) => {
-        const mainPage = new MainPage(page)
-        await mainPage.addNewTask(text1)
-        await mainPage.addNewTask(text2)
-        await mainPage.check(mainPage.allTasks().nth(1))
-        await expect(mainPage.allTasks().all()).resolves.toHaveLength(2)
+    test("clear localStorage and verify the app resets to empty state", async ({ page, todoPage }) => {
+        await todoPage.addNewTask(text1)
+        await todoPage.addNewTask(text2)
+        await todoPage.check(todoPage.allTasks().nth(1))
+        await expect(todoPage.allTasks().all()).resolves.toHaveLength(2)
 
         // Clear localStorage
         await page.evaluate(() => localStorage.clear())
@@ -72,25 +69,24 @@ test.describe("Persistence", () => {
         await expect(reloadedPage.allTasks().all()).resolves.toHaveLength(0)
     })
 
-    test("should respect the back button", async ({ page }) => {
-        const mainPage = new MainPage(page)
-        const allTasks = mainPage.allTasks()
+    test("should respect the back button", async ({ page, todoPage }) => {
+        const allTasks = todoPage.allTasks()
 
         // Arrange: have 3 tasks, 1 of them completed
-        await mainPage.addNewTask(text1)
-        await mainPage.addNewTask(text2)
-        await mainPage.addNewTask(text3)
-        await mainPage.check(mainPage.allTasks().nth(1))
+        await todoPage.addNewTask(text1)
+        await todoPage.addNewTask(text2)
+        await todoPage.addNewTask(text3)
+        await todoPage.check(todoPage.allTasks().nth(1))
 
         // Tasks in the All filter are 3
         await expect(allTasks.all()).resolves.toHaveLength(3)
 
         // Tasks in the Active filter are 2
-        await mainPage.filterActiveTasks()
+        await todoPage.filterActiveTasks()
         await expect(allTasks.all()).resolves.toHaveLength(2)
 
         // Tasks in the Completed filter are 1
-        await mainPage.filterCompletedTasks()
+        await todoPage.filterCompletedTasks()
         await expect(allTasks.all()).resolves.toHaveLength(1)
 
         // press Back button repeatedly and check the expected number of tasks
