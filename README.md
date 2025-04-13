@@ -49,7 +49,7 @@ npm install
 3.  **Run tests for a specific browser:**
     ```bash
     npx playwright test --project=firefox
-    # Or firefox, webkit
+    # Or chrome, webkit
     ```
 
 4.  **View the HTML Report:**
@@ -61,9 +61,9 @@ npm install
 
 ## Assumptions and Notes
 
-Tests are designed to run independently of each other
-Each test starts with a clean state (fresh load of the app)
-The tests verify both UI state and application behavior
+- Tests are designed to run independently of each other
+- Each test starts with a clean state (fresh load of the app)
+- The tests verify both UI state and application behavior
 
 ## Test Cases
 The tests cover the following functionality:
