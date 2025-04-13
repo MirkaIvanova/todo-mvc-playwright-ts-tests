@@ -33,7 +33,7 @@ npm install
     ```bash
     npm test
     ```
-    Playwright will run the tests on Chrome only (headless by default) and output the results to the console.
+    Playwright will run the tests on Chromium only (headless by default) and output the results to the console.
 
     To run the tests on all configured browsers use:
     ```bash
@@ -49,7 +49,7 @@ npm install
 3.  **Run tests for a specific browser:**
     ```bash
     npx playwright test --project=firefox
-    # Or chrome, webkit
+    # Or chromium, webkit
     ```
 
 4.  **View the HTML Report:**
