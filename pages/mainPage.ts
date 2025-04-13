@@ -109,16 +109,15 @@ export class MainPage {
         await this.toggleAllCheckbox.click()
     }
 
-    // @mii rename to filterAllTasks
-    async filterAll() {
+    async filterAllTasks() {
         await this.filters.all.click()
     }
 
-    async filterActive() {
+    async filterActiveTasks() {
         await this.filters.active.click()
     }
 
-    async filterCompleted() {
+    async filterCompletedTasks() {
         await this.filters.completed.click()
     }
 }

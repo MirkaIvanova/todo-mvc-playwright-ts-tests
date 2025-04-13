@@ -50,7 +50,7 @@ test.describe("UI and Visual Checks", () => {
         await mainPage.check(mainPage.allTasks().first())
 
         // No tasks is the Active filter, check footer
-        await mainPage.filterActive()
+        await mainPage.filterActiveTasks()
         await expect(mainPage.allTasks().all()).resolves.toHaveLength(0)
         await expect(mainPage.taskCounter).toHaveText("0 items left")
         await expect(mainPage.clearCompletedButton).toBeVisible()
@@ -80,12 +80,12 @@ test.describe("UI and Visual Checks", () => {
         await expect(mainPage.filters.active).not.toHaveClass("selected")
         await expect(mainPage.filters.completed).not.toHaveClass("selected")
 
-        await mainPage.filterActive()
+        await mainPage.filterActiveTasks()
         await expect(mainPage.filters.all).not.toHaveClass("selected")
         await expect(mainPage.filters.active).toHaveClass("selected")
         await expect(mainPage.filters.completed).not.toHaveClass("selected")
 
-        await mainPage.filterCompleted()
+        await mainPage.filterCompletedTasks()
         await expect(mainPage.filters.all).not.toHaveClass("selected")
         await expect(mainPage.filters.active).not.toHaveClass("selected")
         await expect(mainPage.filters.completed).toHaveClass("selected")

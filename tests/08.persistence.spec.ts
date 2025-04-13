@@ -42,7 +42,7 @@ test.describe("Persistence", () => {
         await mainPage.addNewTask(text1)
         await mainPage.addNewTask(text2)
         await mainPage.check(mainPage.allTasks().nth(1))
-        await mainPage.filterCompleted()
+        await mainPage.filterCompletedTasks()
         await expect(mainPage.allTasks().all()).resolves.toHaveLength(1)
 
         await page.reload()
@@ -86,11 +86,11 @@ test.describe("Persistence", () => {
         await expect(allTasks.all()).resolves.toHaveLength(3)
 
         // Tasks in the Active filter are 2
-        await mainPage.filterActive()
+        await mainPage.filterActiveTasks()
         await expect(allTasks.all()).resolves.toHaveLength(2)
 
         // Tasks in the Completed filter are 1
-        await mainPage.filterCompleted()
+        await mainPage.filterCompletedTasks()
         await expect(allTasks.all()).resolves.toHaveLength(1)
 
         // press Back button repeatedly and check the expected number of tasks

@@ -23,38 +23,38 @@ test.describe("Filtering tasks", () => {
         await expect(mainPage.activeTasks().all()).resolves.toHaveLength(3)
         await expect(mainPage.completedTasks().all()).resolves.toHaveLength(0)
 
-        await mainPage.filterActive()
+        await mainPage.filterActiveTasks()
         await expect(mainPage.allTasks().all()).resolves.toHaveLength(3)
 
-        await mainPage.filterCompleted()
+        await mainPage.filterCompletedTasks()
         await expect(mainPage.allTasks().all()).resolves.toHaveLength(0)
 
         // Complete the first task and check the three filters
-        await mainPage.filterAll()
+        await mainPage.filterAllTasks()
         await mainPage.check(mainPage.allTasks().nth(0))
         await expect(mainPage.activeTasks().all()).resolves.toHaveLength(2)
         await expect(mainPage.completedTasks().all()).resolves.toHaveLength(1)
 
-        await mainPage.filterActive()
+        await mainPage.filterActiveTasks()
         await expect(mainPage.allTasks().all()).resolves.toHaveLength(2)
 
-        await mainPage.filterCompleted()
+        await mainPage.filterCompletedTasks()
         await expect(mainPage.allTasks().all()).resolves.toHaveLength(1)
         await expect(mainPage.allTasks().nth(0)).toContainText(text1)
 
         // Delete the second first task and check the three filters
-        await mainPage.filterAll()
+        await mainPage.filterAllTasks()
         await mainPage.deleteTask(mainPage.allTasks().nth(1))
         await expect(mainPage.activeTasks().all()).resolves.toHaveLength(1)
         await expect(mainPage.completedTasks().all()).resolves.toHaveLength(1)
         await expect(mainPage.allTasks().nth(0)).toContainText(text1)
         await expect(mainPage.allTasks().nth(1)).toContainText(text3)
 
-        await mainPage.filterActive()
+        await mainPage.filterActiveTasks()
         await expect(mainPage.allTasks().all()).resolves.toHaveLength(1)
         await expect(mainPage.allTasks().nth(0)).toContainText(text3)
 
-        await mainPage.filterCompleted()
+        await mainPage.filterCompletedTasks()
         await expect(mainPage.allTasks().all()).resolves.toHaveLength(1)
         await expect(mainPage.allTasks().nth(0)).toContainText(text1)
     })

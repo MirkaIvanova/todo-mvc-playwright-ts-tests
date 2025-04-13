@@ -172,26 +172,26 @@ test.describe("Adding tasks", () => {
         await mainPage.check(completedTask)
 
         // Add a new active task while "Completed" filter is applied
-        await mainPage.filterCompleted()
+        await mainPage.filterCompletedTasks()
         await mainPage.addNewTask(taskText1)
 
         // Add a new active task while "Active" filter is applied
-        await mainPage.filterActive()
+        await mainPage.filterActiveTasks()
         await mainPage.addNewTask(taskText2)
 
         // The new tasks appear in the "All" filter view
-        await mainPage.filterAll()
+        await mainPage.filterAllTasks()
         await expect(mainPage.allTasks().all()).resolves.toHaveLength(3)
         await expect(mainPage.allTasks().nth(0)).toHaveText("Completed task")
         await expect(mainPage.allTasks().nth(1)).toHaveText(taskText1)
         await expect(mainPage.allTasks().nth(2)).toHaveText(taskText2)
 
         // The new tasks appear in the "Active" filter view
-        await mainPage.filterActive()
+        await mainPage.filterActiveTasks()
         await expect(mainPage.allTasks().all()).resolves.toHaveLength(2)
 
         // The new tasks not appear in the "Completed" filter view
-        await mainPage.filterCompleted()
+        await mainPage.filterCompletedTasks()
         await expect(mainPage.allTasks().all()).resolves.toHaveLength(1)
     })
 })

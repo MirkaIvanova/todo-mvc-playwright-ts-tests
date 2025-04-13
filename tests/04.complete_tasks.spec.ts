@@ -79,14 +79,14 @@ test.describe("Completing tasks", () => {
         await expect(mainPage.taskCounter).toContainText("0 items left")
 
         // Mark all tasks as uncompleted from "Active" view
-        await mainPage.filterActive()
+        await mainPage.filterActiveTasks()
         await mainPage.toggleAllTasks()
         await expect(mainPage.activeTasks().all()).resolves.toHaveLength(3)
         await expect(mainPage.completedTasks().all()).resolves.toHaveLength(0)
         await expect(mainPage.taskCounter).toContainText("3 items left")
 
         // Mark all tasks as completed from "Completed" view
-        await mainPage.filterCompleted()
+        await mainPage.filterCompletedTasks()
         await mainPage.toggleAllTasks()
         await expect(mainPage.activeTasks().all()).resolves.toHaveLength(0)
         await expect(mainPage.completedTasks().all()).resolves.toHaveLength(3)

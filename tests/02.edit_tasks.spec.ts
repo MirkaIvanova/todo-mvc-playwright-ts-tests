@@ -159,11 +159,11 @@ test.describe("Editing tasks", () => {
         await mainPage.check(allTasks.nth(0))
 
         // Edit a task in the Active filter
-        await mainPage.filterActive()
+        await mainPage.filterActiveTasks()
         await mainPage.editTask(allTasks.nth(1), newText2)
 
         // Edit a task in the Completed filter
-        await mainPage.filterCompleted()
+        await mainPage.filterCompletedTasks()
         await mainPage.editTask(allTasks.nth(0), newText1)
         await expect(allTasks.nth(0)).toHaveText(newText1)
     })

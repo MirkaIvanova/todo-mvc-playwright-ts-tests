@@ -56,7 +56,7 @@ test.describe("Deleting tasks", () => {
 
         // complete one task and filter only Completed tasks
         await mainPage.check(mainPage.allTasks().nth(2))
-        await mainPage.filterCompleted()
+        await mainPage.filterCompletedTasks()
         await expect(mainPage.allTasks().all()).resolves.toHaveLength(1)
 
         // delete the completed task
@@ -71,8 +71,8 @@ test.describe("Deleting tasks", () => {
 
     for (const filter of [
         { name: "All", filterMethod: (page) => {}, expectedTasks: 1 },
-        { name: "Active", filterMethod: (page) => page.filterActive(), expectedTasks: 1 },
-        { name: "Completed", filterMethod: (page) => page.filterCompleted(), expectedTasks: 0 },
+        { name: "Active", filterMethod: (page) => page.filterActiveTasks(), expectedTasks: 1 },
+        { name: "Completed", filterMethod: (page) => page.filterCompletedTasks(), expectedTasks: 0 },
     ]) {
         test(`clear completed when ${filter.name} filter is applied`, async ({ page }) => {
             const mainPage = new MainPage(page)
@@ -98,7 +98,7 @@ test.describe("Deleting tasks", () => {
             await expect(allTasks.all()).resolves.toHaveLength(filter.expectedTasks)
 
             // Go to All filter and verify the completed tasks are deleted
-            await mainPage.filterAll()
+            await mainPage.filterAllTasks()
             await expect(allTasks.all()).resolves.toHaveLength(1)
             await expect(allTasks.nth(0)).toContainText(text3)
         })
