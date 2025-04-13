@@ -1,7 +1,5 @@
 import { type Locator, type Page } from "@playwright/test"
 
-// TODO_ITEMS
-
 export class MainPage {
     readonly page: Page
     readonly newTaskInput: Locator

@@ -3,9 +3,9 @@ import { MainPage } from "../pages/mainPage"
 
 test.describe("Adding tasks", () => {
     // mii rename
-    const TODO_ITEMS1 = "reply to emails like a responsible adult"
-    const TODO_ITEMS2 = "call mom before she calls again"
-    const TODO_ITEMS3 = "start sorting the laundry and hope for the best"
+    const text1 = "reply to emails like a responsible adult"
+    const text2 = "call mom before she calls again"
+    const text3 = "start sorting the laundry and hope for the best"
 
     test.beforeEach(async ({ page }) => {
         await page.goto("https://demo.playwright.dev/todomvc")
@@ -14,11 +14,11 @@ test.describe("Adding tasks", () => {
     test("add a new task", async ({ page }) => {
         const mainPage = new MainPage(page)
 
-        const newTask = await mainPage.addNewTask(TODO_ITEMS1)
+        const newTask = await mainPage.addNewTask(text1)
 
         await expect(newTask).toBeVisible()
         await expect(mainPage.allTasks().all()).resolves.toHaveLength(1)
-        await expect(mainPage.allTasks().first()).toContainText(TODO_ITEMS1)
+        await expect(mainPage.allTasks().first()).toContainText(text1)
         await expect(mainPage.isCompleted(newTask)).resolves.toBeFalsy()
         await expect(mainPage.taskCounter).toContainText("1 item left")
         await expect(mainPage.newTaskInput).toBeEmpty()
@@ -27,14 +27,14 @@ test.describe("Adding tasks", () => {
     test("add multiple tasks, order is preserved", async ({ page }) => {
         const mainPage = new MainPage(page)
 
-        await mainPage.addNewTask(TODO_ITEMS1)
-        await mainPage.addNewTask(TODO_ITEMS2)
-        await mainPage.addNewTask(TODO_ITEMS3)
+        await mainPage.addNewTask(text1)
+        await mainPage.addNewTask(text2)
+        await mainPage.addNewTask(text3)
 
         // Verify order is preserved
-        await expect(mainPage.allTasks().nth(0)).toHaveText(TODO_ITEMS1)
-        await expect(mainPage.allTasks().nth(1)).toHaveText(TODO_ITEMS2)
-        await expect(mainPage.allTasks().nth(2)).toHaveText(TODO_ITEMS3)
+        await expect(mainPage.allTasks().nth(0)).toHaveText(text1)
+        await expect(mainPage.allTasks().nth(1)).toHaveText(text2)
+        await expect(mainPage.allTasks().nth(2)).toHaveText(text3)
 
         await expect(mainPage.allTasks().all()).resolves.toHaveLength(3)
         await expect(mainPage.taskCounter).toHaveText("3 items left")
@@ -43,7 +43,7 @@ test.describe("Adding tasks", () => {
     test("add tasks with duplicate text, they can be manipulated individually", async ({ page }) => {
         const mainPage = new MainPage(page)
 
-        const duplicateText = TODO_ITEMS1
+        const duplicateText = text1
         await mainPage.addNewTask(duplicateText)
         await mainPage.addNewTask(duplicateText)
 
