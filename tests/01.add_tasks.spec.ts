@@ -1,4 +1,5 @@
-import { test, expect } from "../fixtures/fixtures"
+import { test } from "../fixtures/fixtures"
+import { expect } from "../pages/matchers"
 
 test.describe("Adding tasks", () => {
     const text1 = "reply to emails like a responsible adult"
@@ -15,7 +16,8 @@ test.describe("Adding tasks", () => {
         await expect(newTask).toBeVisible()
         await expect(todoPage.allTasks().all()).resolves.toHaveLength(1)
         await expect(todoPage.allTasks().first()).toContainText(text1)
-        await expect(todoPage.isCompleted(newTask)).resolves.toBeFalsy()
+        await expect(newTask).not.toBeCompleted()
+
         await expect(todoPage.taskCounter).toContainText("1 item left")
         await expect(todoPage.newTaskInput).toBeEmpty()
     })
@@ -46,8 +48,8 @@ test.describe("Adding tasks", () => {
 
         // Complete the first task
         await todoPage.check(todoPage.allTasks().nth(0))
-        await expect(todoPage.isCompleted(todoPage.allTasks().nth(0))).resolves.toBeTruthy()
-        await expect(todoPage.isCompleted(todoPage.allTasks().nth(1))).resolves.toBeFalsy()
+        await expect(todoPage.allTasks().nth(0)).toBeCompleted()
+        await expect(todoPage.allTasks().nth(1)).not.toBeCompleted()
 
         // Delete the second task
         await todoPage.deleteTask(todoPage.allTasks().nth(1))

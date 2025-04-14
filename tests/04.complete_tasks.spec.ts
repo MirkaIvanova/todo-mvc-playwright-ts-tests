@@ -1,4 +1,5 @@
-import { test, expect } from "../fixtures/fixtures"
+import { test } from "../fixtures/fixtures"
+import { expect } from "../pages/matchers"
 
 test.describe("Completing tasks", () => {
     const text1 = "reply to emails like a responsible adult"
@@ -24,24 +25,28 @@ test.describe("Completing tasks", () => {
         // Mark the first task as completed
         await todoPage.check(allTasks.first())
 
-        await expect(todoPage.isCompleted(todoPage.allTasks().nth(0))).toBeTruthy()
+        // await expect(todoPage.isCompleted(todoPage.allTasks().nth(0))).toBeTruthy()
+        await expect(todoPage.allTasks().nth(0)).toBeCompleted()
+
         await expect(todoPage.activeTasks().all()).resolves.toHaveLength(2)
         await expect(todoPage.completedTasks().all()).resolves.toHaveLength(1)
-        await expect(todoPage.isChecked(todoPage.allTasks().nth(0))).toBeTruthy()
-        await expect(todoPage.isCompleted(todoPage.allTasks().nth(0))).toBeTruthy()
+
+        // await expect(todoPage.isChecked(todoPage.allTasks().nth(0))).toBeTruthy()
+        // await expect(todoPage.isCompleted(todoPage.allTasks().nth(0))).toBeTruthy()
+        await expect(todoPage.allTasks().nth(0)).toBeCompleted()
         await expect(todoPage.taskCounter).toContainText("2 items left")
     })
 
     test("mark a task as uncompleted", async ({ todoPage }) => {
         // Mark the first task as completed
         await todoPage.check(todoPage.allTasks().nth(0))
-        await expect(todoPage.isCompleted(todoPage.allTasks().nth(0))).resolves.toBeTruthy()
+        await expect(todoPage.allTasks().nth(0)).toBeCompleted()
         await expect(todoPage.taskCounter).toContainText("2 items left")
 
         // Mark the first task as completed
         await todoPage.uncheck(await todoPage.allTasks().nth(0))
 
-        await expect(todoPage.isChecked(todoPage.allTasks().nth(0))).resolves.toBeFalsy()
+        await expect(todoPage.allTasks().nth(0)).not.toBeCompleted()
         await expect(todoPage.taskCounter).toContainText("3 items left")
     })
 
@@ -56,9 +61,9 @@ test.describe("Completing tasks", () => {
 
         await expect(todoPage.activeTasks().all()).resolves.toHaveLength(0)
         await expect(todoPage.completedTasks().all()).resolves.toHaveLength(3)
-        await expect(todoPage.isCompleted(todoPage.allTasks().nth(0))).resolves.toBeTruthy()
-        await expect(todoPage.isCompleted(todoPage.allTasks().nth(1))).resolves.toBeTruthy()
-        await expect(todoPage.isCompleted(todoPage.allTasks().nth(2))).resolves.toBeTruthy()
+        await expect(todoPage.allTasks().nth(0)).toBeCompleted()
+        await expect(todoPage.allTasks().nth(1)).toBeCompleted()
+        await expect(todoPage.allTasks().nth(2)).toBeCompleted()
         await expect(todoPage.taskCounter).toContainText("0 items left")
     })
 

@@ -1,4 +1,5 @@
-import { test, expect } from "../fixtures/fixtures"
+import { test } from "../fixtures/fixtures"
+import { expect } from "../pages/matchers"
 
 test.describe("Keyboard/Accessibility", () => {
     const text1 = "reply to emails like a responsible adult"
@@ -36,8 +37,8 @@ test.describe("Keyboard/Accessibility", () => {
         await page.keyboard.press("Tab")
         await page.keyboard.press("Space")
 
-        await expect(todoPage.isCompleted(todoPage.allTasks().nth(0))).resolves.toBeTruthy()
-        await expect(todoPage.isCompleted(todoPage.allTasks().nth(1))).resolves.toBeFalsy()
+        await expect(todoPage.allTasks().nth(0)).toBeCompleted()
+        await expect(todoPage.allTasks().nth(1)).not.toBeCompleted()
     })
 
     test("focus next/previous task using the keyboard", async ({ page, todoPage }) => {
@@ -45,9 +46,9 @@ test.describe("Keyboard/Accessibility", () => {
         await todoPage.addNewTask(text2)
         await todoPage.addNewTask(text3)
 
-        await expect(todoPage.isCompleted(todoPage.allTasks().nth(0))).resolves.toBeFalsy()
-        await expect(todoPage.isCompleted(todoPage.allTasks().nth(1))).resolves.toBeFalsy()
-        await expect(todoPage.isCompleted(todoPage.allTasks().nth(2))).resolves.toBeFalsy()
+        await expect(todoPage.allTasks().nth(0)).not.toBeCompleted()
+        await expect(todoPage.allTasks().nth(1)).not.toBeCompleted()
+        await expect(todoPage.allTasks().nth(2)).not.toBeCompleted()
 
         // press TAB twice, then SPACE to complete the first task
         await page.keyboard.press("Tab") // focus the toggle checkbox
@@ -60,9 +61,9 @@ test.describe("Keyboard/Accessibility", () => {
         await page.keyboard.press("Space")
 
         // make sure we completed the second task
-        await expect(todoPage.isCompleted(todoPage.allTasks().nth(0))).resolves.toBeFalsy()
-        await expect(todoPage.isCompleted(todoPage.allTasks().nth(1))).resolves.toBeTruthy()
-        await expect(todoPage.isCompleted(todoPage.allTasks().nth(2))).resolves.toBeFalsy()
+        await expect(todoPage.allTasks().nth(0)).not.toBeCompleted()
+        await expect(todoPage.allTasks().nth(1)).toBeCompleted()
+        await expect(todoPage.allTasks().nth(2)).not.toBeCompleted()
     })
 
     test("input field is on focus after adding a new task", async ({ todoPage }) => {

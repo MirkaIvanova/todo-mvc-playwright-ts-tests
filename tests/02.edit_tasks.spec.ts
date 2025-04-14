@@ -38,9 +38,9 @@ test.describe("Editing tasks", () => {
         await expect(allTasks.nth(2)).toHaveText(newText3)
 
         // The editing of the text did not affect tthe completed state
-        await expect(todoPage.isChecked(allTasks.nth(0))).resolves.toBeFalsy()
-        await expect(todoPage.isChecked(allTasks.nth(1))).resolves.toBeFalsy()
-        await expect(todoPage.isChecked(allTasks.nth(2))).resolves.toBeTruthy()
+        await expect(todoPage.allTasks().nth(0)).not.toBeCompleted()
+        await expect(todoPage.allTasks().nth(1)).not.toBeCompleted()
+        await expect(todoPage.allTasks().nth(2)).toBeCompleted()
     })
 
     test("task is deleted when edited to empty or whitespace only", async ({ todoPage }) => {

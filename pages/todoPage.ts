@@ -93,16 +93,6 @@ export class TodoPage extends BasePage {
         await task.getByRole("checkbox").uncheck()
     }
 
-    async isChecked(locator: Locator): Promise<boolean> {
-        const checkbox = locator.getByRole("checkbox")
-        return await checkbox.isChecked()
-    }
-
-    async isCompleted(locator: Locator): Promise<boolean> {
-        const classes = await locator.getAttribute("class")
-        return classes?.includes("completed") ?? false
-    }
-
     async clearCompletedTasks() {
         await this.clearCompletedButton.click()
     }
