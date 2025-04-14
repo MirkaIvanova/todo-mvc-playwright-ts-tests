@@ -2,16 +2,6 @@ import { BasePage } from "./basePage"
 import { type Locator, type Page } from "@playwright/test"
 
 export class TodoPage extends BasePage {
-    readonly path = "/todomvc"
-
-    async goto() {
-        await super.goto(this.path)
-    }
-
-    // Other page-specific methods...
-}
-
-export class MainPage extends BasePage {
     readonly page: Page
     readonly newTaskInput: Locator
     readonly taskCounter: Locator
@@ -66,6 +56,10 @@ export class MainPage extends BasePage {
 
     deleteButton(task: Locator): Locator {
         return task.locator("button.destroy")
+    }
+
+    getPage() {
+        return this.page
     }
 
     async goto(url = "/todomvc/") {

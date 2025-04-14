@@ -1,5 +1,5 @@
 import { test, expect } from "../fixtures/fixtures"
-import { MainPage } from "../pages/mainPage"
+import { TodoPage } from "../pages/todoPage"
 
 test.describe("Persistence", () => {
     const text1 = "reply to emails like a responsible adult"
@@ -25,7 +25,7 @@ test.describe("Persistence", () => {
 
         await page.reload()
 
-        const reloadedPage = new MainPage(page)
+        const reloadedPage = new TodoPage(page)
         const reloadedAllTasks = reloadedPage.allTasks()
 
         // Verify the order and completed state is preserved
@@ -45,7 +45,7 @@ test.describe("Persistence", () => {
 
         await page.reload()
 
-        const reloadedPage = new MainPage(page)
+        const reloadedPage = new TodoPage(page)
 
         // Verify the filter is preserved
         await expect(reloadedPage.allTasks().all()).resolves.toHaveLength(1)
@@ -65,7 +65,7 @@ test.describe("Persistence", () => {
         await page.reload()
 
         // Verify the app resets to empty state
-        const reloadedPage = new MainPage(page)
+        const reloadedPage = new TodoPage(page)
         await expect(reloadedPage.allTasks().all()).resolves.toHaveLength(0)
     })
 

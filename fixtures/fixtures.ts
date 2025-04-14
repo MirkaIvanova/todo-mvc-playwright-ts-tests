@@ -1,13 +1,13 @@
 import { test as base } from "@playwright/test"
-import { MainPage } from "../pages/mainPage"
+import { TodoPage } from "../pages/todoPage"
 
 type TodoMVCFixtures = {
-    todoPage: MainPage
+    todoPage: TodoPage
 }
 
 export const test = base.extend<TodoMVCFixtures>({
     todoPage: async ({ page }, use) => {
-        const todoPage = new MainPage(page)
+        const todoPage = new TodoPage(page)
         await use(todoPage)
     },
 })
